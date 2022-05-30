@@ -47,6 +47,8 @@ if __name__=="__main__":
     words = reviewer.get_words()
     for x in words:
         x.play()
-        time.sleep(2)
+        prediction = reviewer.predict()
+        print(prediction)
+
 
 
