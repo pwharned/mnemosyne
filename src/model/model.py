@@ -41,7 +41,7 @@ class Data:
 
     def get_labels(self):
         labels = [x[0] for x in self.data]
-        return set(labels)
+        return sorted(set(labels), key = labels.index)
 
 
     def get_waves(self):
@@ -53,26 +53,28 @@ class Data:
         for label in self.get_labels():
             waves = [x[1] for x in self.wav if x[0]==label]
             for wav in waves:
-                print(wav)
                 samples, sample_rate = librosa.load(wav, sr=8000 * 2)
                 if len(samples) >= 8000:
                     samples = librosa.resample(samples, len(samples), 8000 * 2)
                     all_wave.append(samples)
                     all_label.append(label)
+        all_wave.append(np.zeros(16000))
+        all_label.append("No Input")
+        print(all_label)
         return all_wave, all_label
 
-    def write_labels(self):
+    def write_labels(self, labels):
+        self.labels = labels
         with open(LABELS, "w") as file:
-            file.write(json.dumps(list(set(self.labels))))
+            file.write(json.dumps(labels))
         return None
 
     def fit_labels(self, labels):
-        self.labels = labels
-        self.write_labels()
         le = LabelEncoder()
         y = le.fit_transform(labels*10)
         self.classes = list(le.classes_)
-        y = np_utils.to_categorical(y, num_classes=len(labels))
+        self.write_labels(self.classes)
+        y = np_utils.to_categorical(y, num_classes=len(self.classes))
         return y
 
     def fit_waves(self, waves):
@@ -159,14 +161,14 @@ class ClassifierLoader:
 
 if __name__=="__main__":
     data = Data("vietnamese")
-    #model = STTClassifier(data)
-    #model.train()
+    model = STTClassifier(data)
+    model.train()
 
     classifier = ClassifierLoader()
 
     database = DatabaseManager()
-    word = Word("y ta", "vietnamese")
-    word2 = Word("Ong", "vietnamese")
+    word = Word("y tá", "vietnamese")
+    word2 = Word("ông", "vietnamese")
 
 
     audio = word.get_word_audio()[0]

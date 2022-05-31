@@ -15,7 +15,7 @@ class WordManager:
         words = [Word(x, self.language) for x in self.words]
         audio = [x.run() for x in words]
 
-        words = [f"('{x.word}','none', '{x.language}', 0, '{self.date}')" for x in words]
+        words = [f"('{x.word}', '{x.get_translation()}', '{x.language}', 0, '{self.date}')" for x in words]
 
 
         audio  = [str(item) for sublist in audio for item in sublist]
@@ -39,7 +39,7 @@ class WordManager:
 
 
 if __name__=="__main__":
-    words = ["Ong", "y ta"]
+    words = ["ông", "y tá"]
     manager = WordManager(words, "vietnamese")
     print(manager.insert())
 

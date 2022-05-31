@@ -58,5 +58,13 @@ class DatabaseManager:
 
         return self.retrieve(f"SELECT W.WORD, W.TRANSLATION, W.LEVEL,W.NEXT_STUDY, W.DECK, A.AUDIO FROM WORDS  as W, AUDIO as A JOIN AUDIO ON LOWER(W.WORD)=LOWER(A.WORD) where W.DECK = '{language.lower()}' ")
 
+    def get_words_to_study(self, language):
+
+        return self.retrieve(f"SELECT W.WORD, W.TRANSLATION, W.LEVEL,W.NEXT_STUDY, W.DECK, A.AUDIO FROM WORDS  as W, AUDIO as A JOIN AUDIO ON LOWER(W.WORD)=LOWER(A.WORD) where W.DECK = '{language.lower()}' AND W.NEXT_STUDY <= DATETIME('now')")
+
     def get_word_audio(self, word):
         return self.retrieve(f"SELECT W.WORD, A.AUDIO FROM WORDS  as W, AUDIO as A JOIN AUDIO ON LOWER(W.WORD)=LOWER(A.WORD) where LOWER(W.WORD) = '{word.lower()}' ")
+
+
+    def get_word_level(self, word):
+        return self.retrieve(f"SELECT W.LEVEL FROM  WORDS  as W where LOWER(W.WORD) = '{word.lower()}' ")
